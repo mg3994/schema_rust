@@ -11,10 +11,13 @@ fn main() -> Result<()> {
 
     println!("Parsed {} classes and {} properties", vocab.classes.len(), vocab.properties.len());
 
-    let code = generator::generate_vocabulary_code(&vocab);
+    let vocab_code = generator::generate_vocabulary_code(&vocab);
     fs::create_dir_all("crates/schemaorg-vocabulary/src")?;
-    fs::write("crates/schemaorg-vocabulary/src/generated_vocabulary.rs", code)?;
+    fs::write("crates/schemaorg-vocabulary/src/generated_vocabulary.rs", vocab_code)?;
 
-    println!("Generated vocabulary code written to crates/schemaorg-vocabulary/src/generated_vocabulary.rs");
+    let types_code = generator::generate_types_code(&vocab);
+    fs::write("crates/schemaorg-vocabulary/src/generated_types.rs", types_code)?;
+
+    println!("Generated code written to crates/schemaorg-vocabulary/src/");
     Ok(())
 }

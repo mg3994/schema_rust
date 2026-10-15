@@ -6,6 +6,7 @@ members = [
     "crates/schemaorg-codegen",
     "crates/schemaorg-html",
     "crates/schemaorg-wasm",
+    "crates/schemaorg-cli",
 ]
 
 [workspace.package]

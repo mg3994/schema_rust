@@ -1,4 +1,4 @@
-use heck::ToSnakeCase;
+use heck::{ToPascalCase, ToSnakeCase};
 use crate::parser::ParsedVocabulary;
 
 pub fn sanitize_rust_identifier(name: &str) -> String {
@@ -88,6 +88,56 @@ pub fn generate_vocabulary_code(vocab: &ParsedVocabulary) -> String {
     out.push_str("        None\n");
     out.push_str("    }\n");
     out.push_str("}\n");
+
+    out
+}
+
+pub fn generate_types_code(vocab: &ParsedVocabulary) -> String {
+    let mut out = String::new();
+
+    out.push_str("// Auto-generated typed models by schemaorg-codegen.\n");
+    out.push_str("use serde::{Deserialize, Serialize};\n\n");
+
+    let core_types = vec![
+        "Person", "Product", "Organization", "Article", "Event",
+        "Offer", "Place", "PostalAddress", "CreativeWork", "Thing"
+    ];
+
+    for type_name in core_types {
+        if let Some(class_def) = vocab.classes.get(type_name) {
+            let struct_name = class_def.name.to_pascal_case();
+
+            out.push_str(&format!("/// {}\n", class_def.comment.replace('\n', " ")));
+            out.push_str("#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Default)]\n");
+            out.push_str(&format!("pub struct {} {{\n", struct_name));
+            out.push_str("    #[serde(rename = \"@context\", skip_serializing_if = \"Option::is_none\")]\n");
+            out.push_str("    pub context: Option<String>,\n");
+            out.push_str("    #[serde(rename = \"@type\", skip_serializing_if = \"Option::is_none\")]\n");
+            out.push_str("    pub type_name: Option<String>,\n");
+            out.push_str("    #[serde(rename = \"@id\", skip_serializing_if = \"Option::is_none\")]\n");
+            out.push_str("    pub id: Option<String>,\n");
+            out.push_str("    #[serde(skip_serializing_if = \"Option::is_none\")]\n");
+            out.push_str("    pub name: Option<String>,\n");
+            out.push_str("    #[serde(skip_serializing_if = \"Option::is_none\")]\n");
+            out.push_str("    pub description: Option<String>,\n");
+            out.push_str("    #[serde(skip_serializing_if = \"Option::is_none\")]\n");
+            out.push_str("    pub url: Option<String>,\n");
+            out.push_str("}\n\n");
+
+            out.push_str(&format!("impl {} {{\n", struct_name));
+            out.push_str("    pub fn new() -> Self {\n");
+            out.push_str("        Self {\n");
+            out.push_str("            context: Some(\"https://schema.org\".to_string()),\n");
+            out.push_str(&format!("            type_name: Some(\"{}\".to_string()),\n", type_name));
+            out.push_str("            id: None,\n");
+            out.push_str("            name: None,\n");
+            out.push_str("            description: None,\n");
+            out.push_str("            url: None,\n");
+            out.push_str("        }\n");
+            out.push_str("    }\n");
+            out.push_str("}\n\n");
+        }
+    }
 
     out
 }
