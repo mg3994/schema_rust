@@ -1,0 +1,11 @@
+[package]
+name = "schemaorg-html"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+schemaorg-core = { path = "../schemaorg-core" }
+serde_json = { workspace = true }
+kuchikiki = { workspace = true }
+thiserror = { workspace = true }

@@ -1,0 +1,16 @@
+[package]
+name = "schemaorg-wasm"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+schemaorg-core = { path = "../schemaorg-core" }
+schemaorg-html = { path = "../schemaorg-html" }
+wasm-bindgen = { workspace = true }
+serde-wasm-bindgen = { workspace = true }
+serde_json = { workspace = true }
+serde = { workspace = true }
